@@ -45,4 +45,4 @@
 ```tail /var/opt/microsoft/omsagent/log/omsagent.log```
 
 Go to OMS Log Analysis and see whether you can find any search results
-![MysqlSearchView](docs/pictures/MysqlSearchView.png?raw=true)
+![MysqlSearchView](pictures/MysqlSearchView.png?raw=true)
