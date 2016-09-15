@@ -426,7 +426,7 @@ onboard()
 
     set_proxy_setting
 
-    if [ `which dmidecode > /dev/null 2>&1; echo $?` = 0 ]; then
+    if [ "`which dmidecode > /dev/null 2>&1; echo $?`" = 0 ]; then
         UUID=`dmidecode | grep UUID | sed -e 's/UUID: //'`
         OMSCLOUD_ID=`dmidecode | grep "Tag: 77" | sed -e 's/Asset Tag: //'`
     elif [ -f /sys/devices/virtual/dmi/id/chassis_asset_tag ]; then
@@ -682,8 +682,11 @@ main()
     fi
 	
     # If we reach this point, onboarding was successful, we can remove the
-    # onboard conf to prevent accidentally re-onboarding
+    # onboard conf to prevent accidentally re-onboarding 
     [ "$ONBOARD_FROM_FILE" = "1" ] && rm "$FILE_ONBOARD" > /dev/null 2>&1 || true
+  
+    # Register omsagent as a service and start the agent
+    /opt/microsoft/omsagent/bin/service_control enable
 
     clean_exit 0
 }

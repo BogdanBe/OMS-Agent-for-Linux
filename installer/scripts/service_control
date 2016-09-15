@@ -18,6 +18,7 @@
 
 LOGFILE=/var/opt/microsoft/omsagent/log/omsagent.log
 PIDFILE=/var/opt/microsoft/omsagent/run/omsagent.pid
+OMSADMIN_CONF=/etc/opt/microsoft/omsagent/conf/omsadmin.conf
 
 verify_privileges()
 {
@@ -42,6 +43,13 @@ is_omsagent_running()
         return 0
     else
         return 1
+    fi
+}
+
+warn_if_agent_not_onboarded()
+{
+    if [ ! -f $OMSADMIN_CONF ]; then
+       echo "Warning: Agent is not onboarded. omsagent cannot be registered as a service."
     fi
 }
 
@@ -93,6 +101,7 @@ start_omsagent_process()
 
 start_omsagent()
 {
+    warn_if_agent_not_onboarded
     is_omsagent_running
     [ $? -ne 0 ] && return
 
@@ -143,6 +152,8 @@ restart_omsagent()
         return
     fi
 
+    warn_if_agent_not_onboarded
+
     # If systemd lives here, then we have a systemd unit file
     if pidof systemd 1> /dev/null 2> /dev/null; then
         /bin/systemctl restart omsagent
@@ -191,7 +202,9 @@ find_systemd_dir()
 
 enable_omsagent_service()
 {
-    if [ ! -f /etc/opt/microsoft/omsagent/conf/.service_registered ] && [ -f /etc/opt/microsoft/omsagent/conf/omsadmin.conf ]; then
+    warn_if_agent_not_onboarded
+
+    if [ ! -f /etc/opt/microsoft/omsagent/conf/.service_registered ] && [ -f $OMSADMIN_CONF ]; then
         echo "Configuring OMS agent service ..."
         if pidof systemd 1> /dev/null 2> /dev/null; then
             # systemd
