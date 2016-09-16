@@ -1,4 +1,4 @@
-# MySQL Log Monitoring Solution for Operations Management Suite
+# MySQL Server and Log Monitoring Solution for Operations Management Suite
 
 1. Setup a Linux(Ubuntu/Redhat) machine and install [MySQL](http://dev.mysql.com/doc/refman/5.7/en/installing.html).
 
@@ -6,10 +6,20 @@
 
 3. Configure MySQL to generate slow, error and general logs.
 
-4. Verify and update the MySQL log file path in the configuration file ```/etc/opt/microsoft/omsagent/conf/omsagent.d/mysql_logs.conf```
+4. Verify and update the MySQL log file path in the configuration file ```/etc/opt/microsoft/omsagent/conf/omsagent.d/mysql.conf```  
+If ```mysql.conf``` is not present in the above location, move it from ```/etc/opt/microsoft/omsagent/sysconf/omsagent.d/```
 
   ```config
-  # MySql General Log
+  # MySQL Workload
+  
+  <source>
+    ...
+    username <MySQL-username>
+    password <MySQL-password-for-username>
+    ...
+  </source>
+  
+  # MySQL General Log
   
   <source>
     ...
@@ -17,7 +27,7 @@
     ...
   </source>
   
-  # MySql Error Log
+  # MySQL Error Log
   
   <source>
     ...
@@ -25,7 +35,7 @@
     ...
   </source>
   
-  # MySql Slow Query Log
+  # MySQL Slow Query Log
   
   <source>
     ...
@@ -69,3 +79,10 @@ Change ```create 640 mysql adm``` to ```create 644 mysql adm```
 
 3. After changing file permissions, the OMS agent should be restarted:  
 ```sudo service omsagent restart```
+
+
+
+
+If you encounter either of the following in ```omsagent.log```, these warnings can safely be ignored:  
+```[warn]: pattern not match: ...```  
+```[warn]: got incomplete line ...```
